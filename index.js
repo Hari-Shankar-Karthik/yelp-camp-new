@@ -3,6 +3,7 @@ const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
 const Campground = require("./models/campground");
+const methodOverride = require('method-override'); // for PUT and DELETE requests
 
 // Connect to MongoDB
 mongoose.connect("mongodb://localhost:27017/yelp-camp-new")
@@ -14,12 +15,15 @@ mongoose.connect("mongodb://localhost:27017/yelp-camp-new")
         console.log(err);
     });
 
-// Middleware to parse the request body (for form submission)
-app.use(express.urlencoded({ extended: true }));
-
 // Set up EJS. 'views' directory contains all rendered views
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
+// override with POST having ?_method=DELETE
+app.use(methodOverride('_method'))
+
+// Middleware to parse the request body (for form submission)
+app.use(express.urlencoded({ extended: true }));
 
 // Set up the public directory
 app.use(express.static(path.join(__dirname, "public")));
@@ -29,7 +33,48 @@ app.listen(3000, () => {
     console.log("Server is running on port 3000");
 })
 
-// Define the home route
-app.get("/", (req, res) => {
-    res.render("home");
+// display the index page (all campgrounds)
+app.get("/campgrounds", async (req, res) => {
+    const campgrounds = await Campground.find();
+    res.render("campgrounds/index", {campgrounds});
+})
+
+// display the form to create a new campground
+app.get("/campgrounds/new", (req, res) => {
+    res.render("campgrounds/new")
+})
+
+// Handle form submission to create a new campground
+app.post("/campgrounds", async (req, res) => {
+    const campground = new Campground(req.body);
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
+});
+
+// display a specific campground
+app.get("/campgrounds/:id", async (req, res) => {
+    const {id} = req.params;
+    const campground = await Campground.findById(id);
+    res.render("campgrounds/show", {campground});
+})
+
+// display the form to edit a specific campground
+app.get("/campgrounds/:id/edit", async (req, res) => {
+    const {id} = req.params;
+    const campground = await Campground.findById(id);
+    res.render("campgrounds/edit", {campground});
+})
+
+// Handle form submission to edit a specific campground
+app.put("/campgrounds/:id", async (req, res) => {
+    const {id} = req.params;
+    const campground = await Campground.findByIdAndUpdate(id, req.body, {runValidators: true, new: true});
+    res.redirect(`/campgrounds/${campground._id}`);
+})
+
+// Handle request to delete a specific campground
+app.delete("/campgrounds/:id", async (req, res) => {
+    const {id} = req.params;
+    await Campground.findByIdAndDelete(id);
+    res.redirect("/campgrounds");
 })

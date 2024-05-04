@@ -1,0 +1,23 @@
+<%- include('../partials/header.ejs') %>
+
+<div class="container">
+    <h1 class="display-1 text-center">All Campgrounds</h1>
+
+    <div class="mb-3">
+        <a href="/campgrounds/new" class="btn btn-primary">Create a New Campground</a>
+    </div>
+
+    <div class="mb-3">
+        <ul class="list-group">
+            <% for(const campground of campgrounds) { %>
+                <li class="list-group-item">
+                    <a href="/campgrounds/<%= campground._id %>"><%= campground.title %></a>
+                </li>
+            <% } %>
+        </ul>
+    </div>
+
+</div>
+
+
+<%- include('../partials/footer.ejs') %>

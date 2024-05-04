@@ -1,0 +1,29 @@
+<%- include('../partials/header.ejs') %>
+
+<div class="py-4 container">
+    <form action="/campgrounds" method="post">
+        <legend>Create a New Campground!</legend>
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title">
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="number" class="form-control" id="price" name="price">
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" rows="3" name="description"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" class="form-control" id="location" name="location">
+        </div>
+        <div class="mb-3 d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary mx-3">Create Campground</button>
+            <a href="/campgrounds" class="btn btn-secondary mx-3">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<%- include('../partials/footer.ejs') %>

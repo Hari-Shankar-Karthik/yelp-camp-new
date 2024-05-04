@@ -1,0 +1,25 @@
+<%- include('../partials/header.ejs') %>
+
+<h1 class="display-1 text-center mb-4"><%= campground.title %></h1>
+
+<div class="row justify-content-center">
+    <div class="col-lg-10 mb-3 row justify-content-center align-items-center">
+        <div class="col-md-5 mb-3">
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Location:</strong> <%= campground.location %></li>
+                <li class="list-group-item"><strong>Price:</strong> $<%= campground.price %>/night</li>
+            </ul>
+        </div>
+        <div class="col-md-7 mb-3">
+            <p class="lead"><%= campground.description %></p>
+        </div>
+    </div>
+</div>
+
+<div class="footer d-flex justify-content-center">
+    <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-primary mx-3">Edit Campground</a>
+    <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="post"><button class="btn btn-danger">Delete Campground</button></form>
+    <a href="/campgrounds" class="btn btn-secondary mx-3">All Campgrounds</a>
+</div>
+
+<%- include('../partials/footer.ejs') %>

@@ -29,7 +29,7 @@ module.exports.getPrice = (minPrice = 10, maxPrice = 30) => {
 };
 
 module.exports.getDescription = async () => {
-    const apiUrl = 'https://api.api-ninjas.com/v1/loremipsum?max_length=100';
+    const apiUrl = 'https://api.api-ninjas.com/v1/loremipsum?max_length=300';
     const apiKey = 'iWAV3825xRHRHbSgi740og==C0v3rr0LQx7Y5wx8';
     return (await fetchData(apiUrl, apiKey)).text;
 };
