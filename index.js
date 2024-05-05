@@ -4,6 +4,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const Campground = require("./models/campground");
 const methodOverride = require('method-override'); // for PUT and DELETE requests
+const ejsMate = require('ejs-mate'); // ejs engine for layouts
 
 // Connect to MongoDB
 mongoose.connect("mongodb://localhost:27017/yelp-camp-new")
@@ -16,6 +17,7 @@ mongoose.connect("mongodb://localhost:27017/yelp-camp-new")
     });
 
 // Set up EJS. 'views' directory contains all rendered views
+app.engine("ejs", ejsMate); // use ejsMate as the engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 

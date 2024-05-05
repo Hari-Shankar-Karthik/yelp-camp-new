@@ -1,5 +1,4 @@
-<%- include('../partials/header.ejs') %>
-
+<%- layout('layouts/boilerplate') %>
 <div class="py-4 container">
     <form action="/campgrounds/<%= campground._id %>?_method=PUT" method="post">
         <legend>Edit Campground</legend>
@@ -25,5 +24,3 @@
         </div>
     </form>
 </div>
-
-<%- include('../partials/footer.ejs') %>

@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/css/main.css">
-    <!-- Bootstrap JS -->
-    <script src="/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <%- block('stylesheets').toString() %>
 </head>
 <body>
     <!-- Navbar -->
@@ -35,3 +37,14 @@
             </div>
         </div>
     </nav>
+
+    <!-- Content -->
+    <%- body %>
+
+    <!-- Bootstrap JS -->
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <%- block('scripts').toString() %>
+</body>
+</html>
