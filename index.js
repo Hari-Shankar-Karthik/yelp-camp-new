@@ -35,6 +35,10 @@ app.listen(3000, () => {
     console.log("Server is running on port 3000");
 })
 
+app.get("/", (req, res) => {
+    res.send("Hello from Yelp Camp");
+})
+
 // display the index page (all campgrounds)
 app.get("/campgrounds", async (req, res) => {
     const campgrounds = await Campground.find();
