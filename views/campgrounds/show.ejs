@@ -1,36 +1,23 @@
 <%- layout('layouts/boilerplate') %>
-
-<h1 class="display-1 text-center mb-4">
-    <%= campground.title %>
-</h1>
-
-<div class="container justify-content-center">
-    <div class="col-lg-10 mb-3 row justify-content-center align-items-center">
-        <div class="col-md-5 mb-3">
-            <ul class="list-group">
-                <li class="list-group-item"><strong>Location:</strong><%= campground.location %></li>
-                <li class="list-group-item"><strong>Price:</strong> $<%= campground.price %>/night</li>
-            </ul>
-        </div>
-        <div class="col-md-7 mb-3"><p class="lead"><%= campground.description %></p></div>
-    </div>
-
-    <div class="row justify-content-center">
+<div class="container">
+    <h1 class="text-center display-1 mb-4"><%= campground.title %></h1>
+    <div class="row mb-3">
         <div class="col-md-6">
-            <form action="/campgrounds/<%= campground._id %>?_method=DELETE" method="post">
-                <div class="row">
-                    <div class="col-md-4">
+            <img src="<%= campground.image %>" alt="" class="img-fluid">
+        </div>
+        <div class="col-md-6 text-end d-flex flex-column justify-content-center">
+            <p class="lead"><%= campground.description %></p>
+            <p><strong>Location:</strong> <%= campground.location %></p>
+            <p><strong>Price:</strong> $<%= campground.price %></p>
+            <div class="row my-3 justify-content-center">
+                <form class="d-inline" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
+                    <div class="btn-group">
                         <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-primary">Edit Campground</a>
-                    </div>
-                    <div class="col-md-4">
                         <button class="btn btn-danger">Delete Campground</button>
+                        <a href="/campgrounds" class="btn btn-secondary">Back to Campgrounds</a>
                     </div>
-                    <div class="col-md-4">
-                        <a href="/campgrounds" class="btn btn-secondary">All Campgrounds</a>
-                    </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-
 </div>

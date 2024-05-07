@@ -28,7 +28,7 @@ module.exports.getPrice = (minPrice = 10, maxPrice = 30) => {
 
 module.exports.getDescription = async () => {
     const params = {
-        max_length: 300,
+        max_length: 200,
     };
     const headers = {
         'X-Api-Key': 'iWAV3825xRHRHbSgi740og==C0v3rr0LQx7Y5wx8',
@@ -51,6 +51,5 @@ module.exports.getImage = async () => {
         Authorization: 'Client-ID KqZWKoh6OBwzaW-5xsdpAbO8Z8c1zXrtIZ2UNLtqtbc',
     };
     const data = await getData('https://api.unsplash.com/photos/random', params, headers);
-    console.log(data.urls);
     return data.urls.regular;
 };

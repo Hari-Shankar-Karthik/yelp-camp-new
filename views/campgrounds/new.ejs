@@ -8,7 +8,11 @@
         </div>
         <div class="mb-3">
             <label for="price" class="form-label">Price</label>
-            <input type="number" class="form-control" id="price" name="price">
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="text" class="form-control">
+                <span class="input-group-text">per night</span>
+            </div>
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
@@ -17,6 +21,10 @@
         <div class="mb-3">
             <label for="location" class="form-label">Location</label>
             <input type="text" class="form-control" id="location" name="location">
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Image URL</label>
+            <input type="text" class="form-control" id="image" name="image">
         </div>
         <div class="mb-3 d-flex justify-content-center">
             <button type="submit" class="btn btn-primary mx-3">Create Campground</button>

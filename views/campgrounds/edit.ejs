@@ -18,6 +18,10 @@
             <label for="location" class="form-label">Location</label>
             <input type="text" class="form-control" id="location" name="location" value="<%= campground.location %>">
         </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Image URL</label>
+            <input type="text" class="form-control" id="image" name="image" value="<%= campground.image %>">
+        </div>
         <div class="mb-3 d-flex justify-content-center">
             <button type="submit" class="btn btn-primary mx-3">Edit Campground</button>
             <a href="/campgrounds/<%= campground._id %>" class="btn btn-secondary mx-3">Cancel</a>
