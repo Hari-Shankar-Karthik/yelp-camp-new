@@ -23,6 +23,7 @@ const seedDB = async sampleSize => {
             price: seedHelper.getPrice(),
             description: await seedHelper.getDescription(),
             location: seedHelper.getLocation(),
+            image: await seedHelper.getImage()
         });
         await camp.validate();
         await camp.save();
@@ -30,7 +31,7 @@ const seedDB = async sampleSize => {
     console.log("New campgrounds created");
 }
 
-seedDB(50)
+seedDB(10)
     .then(() => {
         console.log("Database seeded successfully");
         mongoose.connection.close();

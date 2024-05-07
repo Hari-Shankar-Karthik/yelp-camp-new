@@ -1,26 +1,24 @@
 const cities = require("./cities");
-const fetch = require('node-fetch');
+const axios = require('axios');
 
-const fetchData = async (apiUrl, apiKey) => {
+const getData = async (url, params = {}, headers = {}) => {
     try {
-        const response = await fetch(apiUrl, {
-            headers: {
-                'X-Api-Key': apiKey
-            }
-        });
-        if (!response.ok) {
-            throw new Error(`Request failed with status ${response.status}`);
-        }
-        return await response.json();
+        const response = await axios.get(url, {params, headers});
+        return response.data;
     } catch (error) {
         console.error('Error:', error.message);
     }
-};
+}
 
 module.exports.getName = async () => {
-    const apiUrl = 'https://api.api-ninjas.com/v1/randomword?type=noun';
-    const apiKey = 'iWAV3825xRHRHbSgi740og==C0v3rr0LQx7Y5wx8';
-    const name = (await fetchData(apiUrl, apiKey)).word;
+    const params = {
+        type: 'noun',
+    };
+    const headers = {
+        'X-Api-Key': 'iWAV3825xRHRHbSgi740og==C0v3rr0LQx7Y5wx8',
+    };
+    const data = await getData('https://api.api-ninjas.com/v1/randomword', params, headers);
+    const name = data.word;
     return name.charAt(0).toUpperCase() + name.slice(1);
 };
 
@@ -29,12 +27,30 @@ module.exports.getPrice = (minPrice = 10, maxPrice = 30) => {
 };
 
 module.exports.getDescription = async () => {
-    const apiUrl = 'https://api.api-ninjas.com/v1/loremipsum?max_length=300';
-    const apiKey = 'iWAV3825xRHRHbSgi740og==C0v3rr0LQx7Y5wx8';
-    return (await fetchData(apiUrl, apiKey)).text;
+    const params = {
+        max_length: 300,
+    };
+    const headers = {
+        'X-Api-Key': 'iWAV3825xRHRHbSgi740og==C0v3rr0LQx7Y5wx8',
+    };
+    const data = await getData('https://api.api-ninjas.com/v1/loremipsum', params, headers);
+    return data.text;
 };
 
 module.exports.getLocation = () => {
     const city = cities[Math.floor(Math.random() * cities.length)];
     return `${city.city}, ${city.state}`;
+};
+
+module.exports.getImage = async () => {
+    const params = {
+        collections: '483251',
+        orientation: 'landscape',
+    };
+    const headers = {
+        Authorization: 'Client-ID KqZWKoh6OBwzaW-5xsdpAbO8Z8c1zXrtIZ2UNLtqtbc',
+    };
+    const data = await getData('https://api.unsplash.com/photos/random', params, headers);
+    console.log(data.urls);
+    return data.urls.regular;
 };
