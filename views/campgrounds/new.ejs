@@ -1,3 +1,4 @@
+<%- block('scripts').append('<script src="/js/validate.js"></script>') %>
 <%- layout('layouts/boilerplate') %>
 <div class="py-4 container">
     <form action="/campgrounds" method="post" novalidate class="needs-validation">
@@ -32,5 +33,3 @@
         </div>
     </form>
 </div>
-
-<% block('scripts').append('<script src="validate.js"></script>') %>
