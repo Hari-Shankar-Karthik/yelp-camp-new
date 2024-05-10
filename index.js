@@ -6,6 +6,9 @@ const Campground = require("./models/campground");
 const methodOverride = require('method-override'); // for PUT and DELETE requests
 const ejsMate = require('ejs-mate'); // ejs engine for layouts
 
+const AppError = require("./errors/AppError");
+const wrapAsync = require("./errors/wrapAsync");
+
 // Connect to MongoDB
 mongoose.connect("mongodb://localhost:27017/yelp-camp-new")
     .then(() => {
@@ -40,10 +43,13 @@ app.get("/", (req, res) => {
 })
 
 // display the index page (all campgrounds)
-app.get("/campgrounds", async (req, res) => {
+app.get("/campgrounds", wrapAsync(async (req, res) => {
     const campgrounds = await Campground.find();
+    if(!campgrounds) {
+        throw new AppError("Unable to find campgrounds", 404);
+    }
     res.render("campgrounds/index", {campgrounds});
-})
+}))
 
 // display the form to create a new campground
 app.get("/campgrounds/new", (req, res) => {
@@ -51,36 +57,50 @@ app.get("/campgrounds/new", (req, res) => {
 })
 
 // Handle form submission to create a new campground
-app.post("/campgrounds", async (req, res) => {
+app.post("/campgrounds", wrapAsync(async (req, res) => {
     const campground = new Campground(req.body);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
-});
+}))
 
 // display a specific campground
-app.get("/campgrounds/:id", async (req, res) => {
+app.get("/campgrounds/:id", wrapAsync(async (req, res) => {
     const {id} = req.params;
     const campground = await Campground.findById(id);
+    if(!campground) {
+        throw new AppError("Campground not found", 404);
+    }
     res.render("campgrounds/show", {campground});
-})
+}))
 
 // display the form to edit a specific campground
-app.get("/campgrounds/:id/edit", async (req, res) => {
+app.get("/campgrounds/:id/edit", wrapAsync(async (req, res) => {
     const {id} = req.params;
     const campground = await Campground.findById(id);
+    if(!campground) {
+        throw new AppError("Campground not found", 404);
+    }
     res.render("campgrounds/edit", {campground});
-})
+}))
 
 // Handle form submission to edit a specific campground
-app.put("/campgrounds/:id", async (req, res) => {
+app.put("/campgrounds/:id", wrapAsync(async (req, res) => {
     const {id} = req.params;
     const campground = await Campground.findByIdAndUpdate(id, req.body, {runValidators: true, new: true});
     res.redirect(`/campgrounds/${campground._id}`);
-})
+}))
 
 // Handle request to delete a specific campground
-app.delete("/campgrounds/:id", async (req, res) => {
+app.delete("/campgrounds/:id", wrapAsync(async (req, res) => {
     const {id} = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect("/campgrounds");
+}))
+
+app.use((err, req, res, next) => {
+    const {status = 500} = err;
+    if(!err.message) {
+        err.message = 'Something went wrong';
+    }
+    res.status(status).render('error', {err});
 })
