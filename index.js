@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const Campground = require("./models/campground");
 const methodOverride = require('method-override'); // for PUT and DELETE requests
 const ejsMate = require('ejs-mate'); // ejs engine for layouts
+const {campgroundSchema} = require('./schemas'); // for validating the request body
 
 const AppError = require("./errors/AppError");
 const wrapAsync = require("./errors/wrapAsync");
@@ -58,6 +59,11 @@ app.get("/campgrounds/new", (req, res) => {
 
 // Handle form submission to create a new campground
 app.post("/campgrounds", wrapAsync(async (req, res) => {
+    try {
+        await campgroundSchema.validateAsync(req.body);
+    } catch (err) {
+        throw new AppError(err, 400);
+    }
     const campground = new Campground(req.body);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
@@ -85,6 +91,11 @@ app.get("/campgrounds/:id/edit", wrapAsync(async (req, res) => {
 
 // Handle form submission to edit a specific campground
 app.put("/campgrounds/:id", wrapAsync(async (req, res) => {
+    try {
+        await campgroundSchema.validateAsync(req.body);
+    } catch (err) {
+        throw new AppError(err, 400);
+    }
     const {id} = req.params;
     const campground = await Campground.findByIdAndUpdate(id, req.body, {runValidators: true, new: true});
     res.redirect(`/campgrounds/${campground._id}`);
