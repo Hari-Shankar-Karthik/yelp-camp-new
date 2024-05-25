@@ -29,6 +29,7 @@ router.post("/", wrapAsync(async (req, res) => {
     await campgroundSchema.validateAsync(req.body);
     const campground = new Campground(req.body);
     await campground.save();
+    req.flash('success', 'Campground created successfully!');
     res.redirect(`/campgrounds/${campground._id}`);
 }))
 
@@ -56,14 +57,16 @@ router.get("/:id/edit", wrapAsync(async (req, res) => {
 router.put("/:id", wrapAsync(async (req, res) => {
     await campgroundSchema.validateAsync(req.body);
     const {id} = req.params;
-    const campground = await Campground.findByIdAndUpdate(id, req.body, {runValidators: true, new: true});
-    res.redirect(`/campgrounds/${campground._id}`);
+    await Campground.findByIdAndUpdate(id, req.body, {runValidators: true});
+    req.flash('success', 'Campground updated successfully!');
+    res.redirect(`/campgrounds/${id}`);
 }))
 
 // Handle request to delete a specific campground
 router.delete("/:id", wrapAsync(async (req, res) => {
     const {id} = req.params;
     await Campground.findByIdAndDelete(id);
+    req.flash('success', 'Campground deleted successfully!');
     res.redirect("/campgrounds");
 }))
 
