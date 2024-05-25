@@ -2,14 +2,11 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
-const Campground = require("./models/campground");
-const Review = require("./models/review");
-const methodOverride = require('method-override'); // for PUT and DELETE requests
-const ejsMate = require('ejs-mate'); // ejs engine for layouts
-const joiSchemas = require('./schemas'); // for validating the request body
+const methodOverride = require('method-override');
+const engine = require('ejs-mate');
 
-const AppError = require("./errors/AppError");
-const wrapAsync = require("./errors/wrapAsync");
+const campgrounds = require("./routes/campgrounds");
+const reviews = require("./routes/reviews");
 
 // Connect to MongoDB
 mongoose.connect("mongodb://localhost:27017/yelp-camp-new")
@@ -21,109 +18,32 @@ mongoose.connect("mongodb://localhost:27017/yelp-camp-new")
         console.log(err);
     });
 
-// Set up EJS. 'views' directory contains all rendered views
-app.engine("ejs", ejsMate); // use ejsMate as the engine
+// EJS setup
+app.engine("ejs", engine);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// override with POST having ?_method=DELETE
-app.use(methodOverride('_method'))
-
-// Middleware to parse the request body (for form submission)
+// Middleware
+app.use(methodOverride('_method'));
 app.use(express.urlencoded({ extended: true }));
-
-// Set up the public directory
 app.use(express.static(path.join(__dirname, "public")));
+
+// Route handlers
+app.use('/campgrounds', campgrounds);
+app.use('/campgrounds/:id/reviews', reviews);
 
 // Start the server on port 3000
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
 })
 
-// display the index page (all campgrounds)
-app.get("/campgrounds", wrapAsync(async (req, res) => {
-    const campgrounds = await Campground.find();
-    if(!campgrounds) {
-        throw new AppError("Unable to find campgrounds", 404);
-    }
-    res.render("campgrounds/index", {campgrounds});
-}))
-
-// display the form to create a new campground
-app.get("/campgrounds/new", (req, res) => {
-    res.render("campgrounds/new")
-})
-
-// Handle form submission to create a new campground
-app.post("/campgrounds", wrapAsync(async (req, res) => {
-    await joiSchemas.campgroundSchema.validateAsync(req.body);
-    const campground = new Campground(req.body);
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
-}))
-
-// display a specific campground
-app.get("/campgrounds/:id", wrapAsync(async (req, res) => {
-    const {id} = req.params;
-    const campground = await Campground.findById(id).populate('reviews');
-    if(!campground) {
-        throw new AppError("Campground not found", 404);
-    }
-    res.render("campgrounds/show", {campground});
-}))
-
-// handle form submission to leave a review
-app.post('/campgrounds/:id/reviews', wrapAsync(async (req, res) => {
-    const {id} = req.params;
-    const campground = await Campground.findById(id);
-    if(!campground) {
-        throw new AppError("Campground not found", 404);
-    }
-    await joiSchemas.reviewSchema.validateAsync(req.body);
-    const newReview = new Review(req.body);
-    campground.reviews.push(newReview);
-    await newReview.save();
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
-}))
-
-// handle form submission to delete a review
-app.delete('/campgrounds/:id/reviews/:reviewID', wrapAsync(async (req, res) => {
-    const {id, reviewID} = req.params;
-    await Campground.findByIdAndUpdate(id, {$pull: {reviews: reviewID}});
-    await Review.findByIdAndDelete(reviewID);
-    res.redirect(`/campgrounds/${id}`);
-}))
-
-// display the form to edit a specific campground
-app.get("/campgrounds/:id/edit", wrapAsync(async (req, res) => {
-    const {id} = req.params;
-    const campground = await Campground.findById(id);
-    if(!campground) {
-        throw new AppError("Campground not found", 404);
-    }
-    res.render("campgrounds/edit", {campground});
-}))
-
-// Handle form submission to edit a specific campground
-app.put("/campgrounds/:id", wrapAsync(async (req, res) => {
-    await joiSchemas.campgroundSchema.validateAsync(req.body);
-    const {id} = req.params;
-    const campground = await Campground.findByIdAndUpdate(id, req.body, {runValidators: true, new: true});
-    res.redirect(`/campgrounds/${campground._id}`);
-}))
-
-// Handle request to delete a specific campground
-app.delete("/campgrounds/:id", wrapAsync(async (req, res) => {
-    const {id} = req.params;
-    await Campground.findByIdAndDelete(id);
-    res.redirect("/campgrounds");
-}))
-
+// Error handling middleware
 app.use((err, req, res, next) => {
-    const {status = 500} = err;
+    if(!err.status) {
+        err.status = 500;
+    }
     if(!err.message) {
         err.message = 'Something went wrong';
     }
-    res.status(status).render('error', {err});
+    res.status(err.status).render('error', {err});
 })
