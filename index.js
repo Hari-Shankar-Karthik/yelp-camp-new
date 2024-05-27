@@ -2,13 +2,15 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
-const methodOverride = require('method-override');
 const engine = require('ejs-mate');
+const methodOverride = require('method-override');
 const session = require('express-session');
 const flash = require('connect-flash');
-
 const campgrounds = require("./routes/campgrounds");
 const reviews = require("./routes/reviews");
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const User = require('./models/user');
 
 // Connect to MongoDB
 mongoose.connect("mongodb://localhost:27017/yelp-camp-new")
@@ -44,11 +46,27 @@ app.use((req, res, next) => {
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
-})
+});
+app.use(passport.initialize());
+app.use(passport.session());
+
+// use static authenticate method of model in LocalStrategy
+passport.use(new LocalStrategy(User.authenticate()));
+// use static serialize and deserialize of model for passport session support
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // Route handlers
 app.use('/campgrounds', campgrounds);
 app.use('/campgrounds/:id/reviews', reviews);
+
+// // test route to check if user model is working
+// app.get('/make-user', wrapAsync(async (req, res) => {
+//     const {username, email} = req.query;
+//     const user = new User({username, email});
+//     const registeredUser = await User.register(user, 'superrandompassword')
+//     res.send(registeredUser);
+// }))
 
 // Start the server on port 3000
 app.listen(3000, () => {
