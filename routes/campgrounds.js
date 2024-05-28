@@ -8,7 +8,7 @@ const wrapAsync = require("../errors/wrapAsync");
 
 const {campgroundSchema} = require('../schemas'); // JOI schema for campgrounds
 
-
+const { isLoggedIn } = require('../middleware');
 
 // display the index page (all campgrounds)
 router.get("/", wrapAsync(async (req, res) => {
@@ -20,12 +20,12 @@ router.get("/", wrapAsync(async (req, res) => {
 }))
 
 // display the form to create a new campground
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
     res.render("campgrounds/new")
 })
 
 // Handle form submission to create a new campground
-router.post("/", wrapAsync(async (req, res) => {
+router.post("/", isLoggedIn, wrapAsync(async (req, res) => {
     await campgroundSchema.validateAsync(req.body);
     const campground = new Campground(req.body);
     await campground.save();
@@ -44,7 +44,7 @@ router.get("/:id", wrapAsync(async (req, res) => {
 }))
 
 // display the form to edit a specific campground
-router.get("/:id/edit", wrapAsync(async (req, res) => {
+router.get("/:id/edit", isLoggedIn, wrapAsync(async (req, res) => {
     const {id} = req.params;
     const campground = await Campground.findById(id);
     if(!campground) {
@@ -54,7 +54,7 @@ router.get("/:id/edit", wrapAsync(async (req, res) => {
 }))
 
 // Handle form submission to edit a specific campground
-router.put("/:id", wrapAsync(async (req, res) => {
+router.put("/:id", isLoggedIn, wrapAsync(async (req, res) => {
     await campgroundSchema.validateAsync(req.body);
     const {id} = req.params;
     await Campground.findByIdAndUpdate(id, req.body, {runValidators: true});
@@ -63,7 +63,7 @@ router.put("/:id", wrapAsync(async (req, res) => {
 }))
 
 // Handle request to delete a specific campground
-router.delete("/:id", wrapAsync(async (req, res) => {
+router.delete("/:id", isLoggedIn, wrapAsync(async (req, res) => {
     const {id} = req.params;
     await Campground.findByIdAndDelete(id);
     req.flash('success', 'Campground deleted successfully!');

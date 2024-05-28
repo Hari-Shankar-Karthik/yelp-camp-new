@@ -9,7 +9,6 @@ const wrapAsync = require("../errors/wrapAsync");
 
 const {reviewSchema} = require('../schemas'); // JOI schema for reviews
 
-
 // handle form submission to leave a review
 router.post('/', wrapAsync(async (req, res) => {
     const {id} = req.params;
