@@ -23,10 +23,14 @@ router.post('/register', async (req, res, next) => {
         await userSchema.validateAsync(req.body);
         const {username, email, password} = req.body;
         const user = new User({username, email});
-        await User.register(user, password);
-        // TODO: Need to login the user here itself.
-        req.flash('success', 'User registered successfully!');
-        next();
+        const registeredUser = await User.register(user, password);
+        req.login(registeredUser, err => {
+            if(err) {
+                return next(err);
+            }
+            req.flash('success', 'User registered successfully!');
+            next();
+        })
     } catch(err) {
         console.log(err);
         if(err.code === 11000) {
@@ -58,12 +62,11 @@ router.get('/logout', (req, res) => {
     }
     req.logout(err => {
         if(err) {
-            req.flash('error', 'Error logging out!');
-        } else {
-            req.flash('success', 'Logged out successfully!');
+            return next(err);
         }
+        req.flash('success', 'Logged out successfully!');
         res.redirect('/campgrounds');
-    })
+    });
 })
 
 module.exports = router;
