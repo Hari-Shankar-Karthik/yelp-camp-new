@@ -24,15 +24,16 @@ router.post('/register', async (req, res, next) => {
         const {username, email, password} = req.body;
         const user = new User({username, email});
         const registeredUser = await User.register(user, password);
+        const {targetURL} = req.session;
         req.login(registeredUser, err => {
             if(err) {
                 return next(err);
             }
+            req.session.targetURL = targetURL;
             req.flash('success', 'User registered successfully!');
             next();
         })
     } catch(err) {
-        console.log(err);
         if(err.code === 11000) {
             req.flash('error', 'A user with the given email is already registered');
         } else {
