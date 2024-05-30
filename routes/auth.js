@@ -9,9 +9,12 @@ const wrapAsync = require("../errors/wrapAsync");
 const {userSchema} = require("../schemas");
 
 const redirectToTargetURL = (req, res) => {
-    const redirectURL = req.session.targetURL || '/campgrounds';
-    req.session.targetURL = null;
-    res.redirect(redirectURL);
+    if(!req.session.redirectInfo || req.session.redirectInfo.method !== 'GET') {
+        return res.redirect('/campgrounds');
+    }
+    const {targetURL} = req.session.redirectInfo;
+    req.session.redirectInfo = null;
+    res.redirect(targetURL);
 }
 
 router.get('/register', (req, res) => {
@@ -24,12 +27,12 @@ router.post('/register', async (req, res, next) => {
         const {username, email, password} = req.body;
         const user = new User({username, email});
         const registeredUser = await User.register(user, password);
-        const {targetURL} = req.session;
+        const {redirectInfo} = req.session;
         req.login(registeredUser, err => {
             if(err) {
                 return next(err);
             }
-            req.session.targetURL = targetURL;
+            req.session.redirectInfo = redirectInfo;
             req.flash('success', 'User registered successfully!');
             next();
         })
