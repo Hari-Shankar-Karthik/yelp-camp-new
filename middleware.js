@@ -1,3 +1,5 @@
+const Campground = require('./models/campground');
+
 module.exports.isLoggedIn = (req, res, next) => {
     if(!req.isAuthenticated()) {
         req.session.redirectInfo = {
@@ -20,7 +22,7 @@ module.exports.postLoginRedirect = (req, res) => {
     res.redirect(targetURL);
 }
 
-module.exports.isAuthor = async (req, res, next) => {
+module.exports.isCampgroundAuthor = async (req, res, next) => {
     const {id} = req.params;
     const campground = await Campground.findById(id);
     if(!campground) {

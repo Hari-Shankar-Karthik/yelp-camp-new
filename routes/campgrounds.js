@@ -4,7 +4,7 @@ const Campground = require('../models/campground');
 const AppError = require('../errors/AppError');
 const wrapAsync = require('../errors/wrapAsync');
 const {campgroundSchema} = require('../schemas'); // JOI schema for campgrounds
-const {isLoggedIn, isAuthor} = require('../middleware');
+const {isLoggedIn, isCampgroundAuthor} = require('../middleware');
 
 // display the index page (all campgrounds)
 router.get('/', wrapAsync(async (req, res) => {
@@ -24,6 +24,7 @@ router.get('/new', isLoggedIn, (req, res) => {
 router.post('/', isLoggedIn, wrapAsync(async (req, res) => {
     await campgroundSchema.validateAsync(req.body);
     const campground = new Campground(req.body);
+    campground.author = req.user._id;
     await campground.save();
     req.flash('success', 'Campground created successfully!');
     res.redirect(`/campgrounds/${campground._id}`);
@@ -40,14 +41,14 @@ router.get('/:id', wrapAsync(async (req, res) => {
 }))
 
 // display the form to edit a specific campground
-router.get('/:id/edit', isLoggedIn, isAuthor, wrapAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedIn, isCampgroundAuthor, wrapAsync(async (req, res) => {
     const {id} = req.params;
     const campground = await Campground.findById(id);
     res.render('campgrounds/edit', {campground});
 }))
 
 // Handle form submission to edit a specific campground
-router.put('/:id', isLoggedIn, isAuthor, wrapAsync(async (req, res) => {
+router.put('/:id', isLoggedIn, isCampgroundAuthor, wrapAsync(async (req, res) => {
     await campgroundSchema.validateAsync(req.body);
     const {id} = req.params;
     await Campground.findByIdAndUpdate(id, req.body, {runValidators: true});
@@ -56,7 +57,7 @@ router.put('/:id', isLoggedIn, isAuthor, wrapAsync(async (req, res) => {
 }))
 
 // Handle request to delete a specific campground
-router.delete('/:id', isLoggedIn, isAuthor, wrapAsync(async (req, res) => {
+router.delete('/:id', isLoggedIn, isCampgroundAuthor, wrapAsync(async (req, res) => {
     const {id} = req.params;
     await Campground.findByIdAndDelete(id);
     req.flash('success', 'Campground deleted successfully!');
