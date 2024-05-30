@@ -19,6 +19,7 @@
             </ul>
             <div class="navbar-nav ms-auto">
                 <% if(user) { %>
+                    <a href="/users/<%= user._id %>" class="nav-link"><%= user.username %></span>
                     <a href="/logout" class="nav-link">Logout</a>
                 <% } else { %>
                     <a href="/login" class="nav-link">Login</a>

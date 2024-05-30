@@ -5,7 +5,7 @@ const Review = require('../models/review');
 const AppError = require('../errors/AppError');
 const wrapAsync = require('../errors/wrapAsync');
 const {reviewSchema} = require('../schemas'); // JOI schema for reviews
-const {isLoggedIn} = require('../middleware/auth');
+const {isLoggedIn} = require('../middleware');
 
 // handle form submission to leave a review
 router.post('/', isLoggedIn, wrapAsync(async (req, res) => {

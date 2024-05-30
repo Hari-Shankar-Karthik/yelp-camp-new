@@ -4,7 +4,7 @@ const passport = require('passport');
 const User = require('../models/user');
 const wrapAsync = require('../errors/wrapAsync');
 const {userSchema} = require('../schemas');
-const {postLoginRedirect} = require('../middleware/auth');
+const {postLoginRedirect} = require('../middleware');
 
 router.get('/register', (req, res) => {
     res.render('auth/register');

@@ -2,7 +2,10 @@
 <%- block('scripts').append('<script src="/js/validate.js"></script>') %>
 <%- layout('layouts/boilerplate') %>
 <div class="container">
-    <h1 class="text-center display-1 mb-4"><%= campground.title %></h1>
+    <div class="mb-4">
+        <h1 class="text-center display-1"><%= campground.title %></h1>
+        <div class="text-center"><span class="fs-4">by </span> <span class="fs-2"><%= campground.author.username %></span></div>
+    </div>
     <div class="row mb-5">
         <div class="col-md-6">
             <img src="<%= campground.image %>" alt="" class="img-fluid">
@@ -14,8 +17,10 @@
             <div class="row my-3 justify-content-center">
                 <form class="d-inline" action="/campgrounds/<%= campground._id %>?_method=DELETE" method="POST">
                     <div class="btn-group">
-                        <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-primary">Edit Campground</a>
-                        <button class="btn btn-danger">Delete Campground</button>
+                        <% if(user && campground.author.equals(user)) { %>
+                            <a href="/campgrounds/<%= campground._id %>/edit" class="btn btn-primary">Edit Campground</a>
+                            <button class="btn btn-danger">Delete Campground</button>
+                        <% } %>
                         <a href="/campgrounds" class="btn btn-secondary">Back to Campgrounds</a>
                     </div>
                 </form>
