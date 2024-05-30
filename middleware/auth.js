@@ -10,3 +10,12 @@ module.exports.isLoggedIn = (req, res, next) => {
     }
     next();
 }
+
+module.exports.postLoginRedirect = (req, res) => {
+    if(!req.session.redirectInfo || req.session.redirectInfo.method !== 'GET') {
+        return res.redirect('/campgrounds');
+    }
+    const {targetURL} = req.session.redirectInfo;
+    req.session.redirectInfo = null;
+    res.redirect(targetURL);
+}

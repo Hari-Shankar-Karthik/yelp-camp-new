@@ -1,21 +1,10 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const passport = require("passport");
-
-const User = require("../models/user");
-
-const wrapAsync = require("../errors/wrapAsync");
-
-const {userSchema} = require("../schemas");
-
-const redirectToTargetURL = (req, res) => {
-    if(!req.session.redirectInfo || req.session.redirectInfo.method !== 'GET') {
-        return res.redirect('/campgrounds');
-    }
-    const {targetURL} = req.session.redirectInfo;
-    req.session.redirectInfo = null;
-    res.redirect(targetURL);
-}
+const passport = require('passport');
+const User = require('../models/user');
+const wrapAsync = require('../errors/wrapAsync');
+const {userSchema} = require('../schemas');
+const {postLoginRedirect} = require('../middleware/auth');
 
 router.get('/register', (req, res) => {
     res.render('auth/register');
@@ -44,7 +33,7 @@ router.post('/register', async (req, res, next) => {
         }
         res.redirect('/register');
     }
-}, redirectToTargetURL)
+}, postLoginRedirect)
 
 router.get('/login', (req, res) => {
     res.render('auth/login');
@@ -57,7 +46,7 @@ router.post('/login', passport.authenticate('local', {
 }), (req, res, next) => {
     req.flash('success', 'Logged in successfully!');
     next();
-}, redirectToTargetURL)
+}, postLoginRedirect)
 
 router.get('/logout', (req, res) => {
     if(!req.isAuthenticated()) {

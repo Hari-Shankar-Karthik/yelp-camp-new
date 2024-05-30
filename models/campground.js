@@ -1,6 +1,7 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const {Schema} = mongoose;
-const Review = require("./review");
+const Review = require('./review');
+const { required } = require('joi');
 
 const campgroundSchema = new mongoose.Schema({
     title: {
@@ -24,9 +25,14 @@ const campgroundSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     reviews: [{
         type: Schema.Types.ObjectId,
-        ref: "Review",
+        ref: 'Review',
     }],
 });
 
@@ -34,6 +40,6 @@ campgroundSchema.post('findOneAndDelete', async campground => {
     await Review.deleteMany({ _id: { $in: campground.reviews } });
 });
 
-const Campground = mongoose.model("Campground", campgroundSchema);
+const Campground = mongoose.model('Campground', campgroundSchema);
 
 module.exports = Campground;

@@ -1,22 +1,18 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
-
-const Campground = require("../models/campground");
-const Review = require("../models/review");
-
-const AppError = require("../errors/AppError");
-const wrapAsync = require("../errors/wrapAsync");
-
+const Campground = require('../models/campground');
+const Review = require('../models/review');
+const AppError = require('../errors/AppError');
+const wrapAsync = require('../errors/wrapAsync');
 const {reviewSchema} = require('../schemas'); // JOI schema for reviews
-
-const {isLoggedIn} = require('../middleware');
+const {isLoggedIn} = require('../middleware/auth');
 
 // handle form submission to leave a review
 router.post('/', isLoggedIn, wrapAsync(async (req, res) => {
     const {id} = req.params;
     const campground = await Campground.findById(id);
     if(!campground) {
-        throw new AppError("Campground not found", 404);
+        throw new AppError('Campground not found', 404);
     }
     await reviewSchema.validateAsync(req.body);
     const newReview = new Review(req.body);
