@@ -27,20 +27,22 @@
             </div>
         </div>
     </div>
-    <div class="mb-3">
-        <div class="display-4 text-center">Leave a Review</div>
-        <form action="/campgrounds/<%= campground._id %>/reviews" method="POST" novalidate class="needs-validation">
-            <div class="mb-3">
-                <label for="rating" class="form-label">Rating (1 to 5)</label>
-                <input type="range" class="form-range" name="rating" id="rating" min="1" max="5">
-            </div>
-            <div class="mb-3">
-                <label for="body" class="form-label">Review</label>
-                <textarea class="form-control" id="body" name="body" rows="3" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit Review</button>
-        </form>
-    </div>
+    <% if(user) { %>
+        <div class="mb-3">
+            <div class="display-4 text-center">Leave a Review</div>
+            <form action="/campgrounds/<%= campground._id %>/reviews" method="POST" novalidate class="needs-validation">
+                <div class="mb-3">
+                    <label for="rating" class="form-label">Rating (1 to 5)</label>
+                    <input type="range" class="form-range" name="rating" id="rating" min="1" max="5">
+                </div>
+                <div class="mb-3">
+                    <label for="body" class="form-label">Review</label>
+                    <textarea class="form-control" id="body" name="body" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+            </form>
+        </div>
+    <% } %>
     <div class="mb-5">
         <div class="display-4 text-center mb-2">Reviews</div>
         <div class="row">
@@ -48,13 +50,15 @@
                 <% for(const review of campground.reviews) { %>
                     <div class="col-md-4 mb-3">
                         <div class="border border-4 border-warning rounded p-2">
-                            <div class="mb-1"><b>Rating: </b><%= review.rating %></div>
+                            <div class="mb-1"><b><%= review.author.username %>: </b><%= review.rating %> stars!</div>
                             <div class="mb-1"><b>Review: </b><%= review.body %></div>
-                            <div class="d-flex justify-content-end">
-                                <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
-                                    <button class="btn btn-sm btn-danger">Delete</button>
-                                </form>
-                            </div>
+                            <% if(user && review.author.equals(user)) { %>
+                                <div class="d-flex justify-content-end">
+                                    <form action="/campgrounds/<%= campground._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                                        <button class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            <% } %>
                         </div>
                     </div>
                 <% } %>

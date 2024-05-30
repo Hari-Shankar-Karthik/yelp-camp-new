@@ -5,7 +5,7 @@ const Review = require('../models/review');
 const AppError = require('../errors/AppError');
 const wrapAsync = require('../errors/wrapAsync');
 const {reviewSchema} = require('../schemas'); // JOI schema for reviews
-const {isLoggedIn} = require('../middleware');
+const {isLoggedIn, isReviewAuthor} = require('../middleware');
 
 // handle form submission to leave a review
 router.post('/', isLoggedIn, wrapAsync(async (req, res) => {
@@ -16,6 +16,7 @@ router.post('/', isLoggedIn, wrapAsync(async (req, res) => {
     }
     await reviewSchema.validateAsync(req.body);
     const newReview = new Review(req.body);
+    newReview.author = req.user._id;
     campground.reviews.push(newReview);
     await newReview.save();
     await campground.save();
@@ -24,7 +25,7 @@ router.post('/', isLoggedIn, wrapAsync(async (req, res) => {
 }))
 
 // handle form submission to delete a review
-router.delete('/:reviewID', isLoggedIn, wrapAsync(async (req, res) => {
+router.delete('/:reviewID', isLoggedIn, isReviewAuthor, wrapAsync(async (req, res) => {
     const {id, reviewID} = req.params;
     await Campground.findByIdAndUpdate(id, {$pull: {reviews: reviewID}});
     await Review.findByIdAndDelete(reviewID);

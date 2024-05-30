@@ -33,7 +33,10 @@ router.post('/', isLoggedIn, wrapAsync(async (req, res) => {
 // display a specific campground
 router.get('/:id', wrapAsync(async (req, res) => {
     const {id} = req.params;
-    const campground = await Campground.findById(id).populate('author').populate('reviews');
+    const campground = await Campground.findById(id).populate('author').populate({
+        path: 'reviews',
+        populate: 'author',
+    });
     if(!campground) {
         throw new AppError('Campground not found', 404);
     }
