@@ -4,10 +4,14 @@ const passport = require('passport');
 const {postLoginRedirect} = require('../middleware');
 const auth = require('../controllers/auth');
 
-router.get('/register', auth.registerForm);
-router.post('/register', auth.register, postLoginRedirect);
-router.get('/login', auth.loginForm);
-router.post('/login', passport.authenticate('local', {failureRedirect: '/login', failureFlash: true, keepSessionInfo: true}), auth.login, postLoginRedirect);
-router.get('/logout', auth.logout);
+router.route('/register')
+    .get(auth.registerForm)
+    .post(auth.register, postLoginRedirect)
+
+router.route('/login')
+    .get(auth.loginForm)
+    .post(passport.authenticate('local', {failureRedirect: '/login', failureFlash: true, keepSessionInfo: true}), auth.login, postLoginRedirect)
+
+router.get('/logout', auth.logout)
 
 module.exports = router;
