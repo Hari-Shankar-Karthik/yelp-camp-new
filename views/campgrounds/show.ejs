@@ -9,7 +9,9 @@
     </div>
     <div class="row mb-5">
         <div class="col-md-6">
-            <img src="<%= campground.image %>" alt="" class="img-fluid">
+            <% for(const image of campground.images) { %>
+                <img src="<%= image.path %>" alt="" class="img-fluid">
+            <% } %>
         </div>
         <div class="col-md-6 text-end d-flex flex-column justify-content-center">
             <p class="lead"><%= campground.description %></p>

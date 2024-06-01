@@ -16,8 +16,14 @@ module.exports.newForm = (req, res) => {
 }
 
 module.exports.create = wrapAsync(async (req, res) => {
-    await campgroundSchema.validateAsync(req.body);
+    // await campgroundSchema.validateAsync(req.body);
     const campground = new Campground(req.body);
+    for(const file of req.files) {
+        campground.images.push({
+            path: file.path,
+            filename: file.filename,
+        })
+    }
     campground.author = req.user._id;
     await campground.save();
     req.flash('success', 'Campground created successfully!');

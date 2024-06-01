@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const {Schema} = mongoose;
 const Review = require('./review');
-const { required } = require('joi');
 
 const campgroundSchema = new mongoose.Schema({
     title: {
@@ -21,10 +20,10 @@ const campgroundSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    image: {
-        type: String,
-        required: true,
-    },
+    images: [{
+        path: String,
+        filename: String,
+    }],
     author: {
         type: Schema.Types.ObjectId,
         ref: 'User',
