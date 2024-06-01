@@ -23,8 +23,8 @@ const seedDB = async sampleSize => {
             price: seedHelper.getPrice(),
             description: await seedHelper.getDescription(),
             location: seedHelper.getLocation(),
-            image: await seedHelper.getImage(),
-            author: '6657d71b1ad2f7be48110d2f',
+            images: await seedHelper.getImages(2),
+            author: '6657d71b1ad2f7be48110d2f', // don't delete this user
         });
         await camp.validate();
         await camp.save();
