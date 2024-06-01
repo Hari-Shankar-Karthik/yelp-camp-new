@@ -14,7 +14,7 @@
             <% for(const campground of campgrounds) { %>
                 <div class="mb-5 row border">
                     <div class="col-md-6">
-                        <img src="<%= campground.image %>" alt="" class="img-fluid">
+                        <img src="<%= campground.images[0].path %>" alt="" class="img-fluid">
                     </div>
                     <div class="col-md-6 d-flex flex-column justify-content-evenly">
                         <h2 class="text-center display-4"><%= campground.title %></h2>
