@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const {isLoggedIn, isCampgroundAuthor} = require('../middleware');
+const { isLoggedIn, isCampgroundAuthor } = require('../middleware');
 const campgrounds = require('../controllers/campgrounds');
-const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+const multer = require('multer');
+const { storage } = require('../cloudinary');
+const upload = multer({ storage })
 
 router.route('/')
     .get(campgrounds.index)
