@@ -2,10 +2,16 @@ const express = require('express');
 const router = express.Router();
 const {isLoggedIn, isCampgroundAuthor} = require('../middleware');
 const campgrounds = require('../controllers/campgrounds');
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
 
 router.route('/')
     .get(campgrounds.index)
-    .post(isLoggedIn, campgrounds.create)
+    // .post(isLoggedIn, campgrounds.create)
+    .post(upload.array('image'), (req, res) => {
+        console.log(req.body, req.files);
+        res.send('DEV MODE POST ROUTE');
+    })
 
 router.get('/new', isLoggedIn, campgrounds.newForm)
 
