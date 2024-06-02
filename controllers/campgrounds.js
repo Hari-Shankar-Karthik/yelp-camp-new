@@ -2,6 +2,7 @@ const Campground = require('../models/campground');
 const AppError = require('../errors/AppError');
 const wrapAsync = require('../errors/wrapAsync');
 const { campgroundSchema } = require('../schemas');
+const { cloudinary } = require('../cloudinary');
 
 module.exports.index = wrapAsync(async (req, res) => {
     const campgrounds = await Campground.find();
@@ -52,19 +53,21 @@ module.exports.update = wrapAsync(async (req, res) => {
     // await campgroundSchema.validateAsync(req.body);
     const { id } = req.params;
     const { body } = req;
-    const newImages = req.files.map(file => ({path: file.path, filename: file.filename}));
+    // console.log(body);
+    const newImages = req.files.map(file => ({ path: file.path, filename: file.filename }));
     const updates = {
         $push: { images: { $each: newImages } },
         ...body,
     };
     await Campground.findByIdAndUpdate(id, updates, { runValidators: true });
-    // const campground = Campground.findById(id);
-    // for (const file of req.files) {
-    //     campground.images.push({
-    //         path: file.path,
-    //         filename: file.filename,
-    //     })
-    // }
+    if (body.toDelete && body.toDelete.length) {
+        await Campground.findByIdAndUpdate(id, {
+            $pull: { images: { filename: { $in: body.toDelete } } },
+        }, { runValidators: true });
+        for (const filename of body.toDelete) {
+            await cloudinary.uploader.destroy(filename);
+        }
+    }
     req.flash('success', 'Campground updated successfully!');
     res.redirect(`/campgrounds/${id}`);
 })
