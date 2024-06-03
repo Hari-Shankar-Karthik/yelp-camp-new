@@ -2,7 +2,7 @@
 <%- block('scripts').append('<script src="/js/validate.js"></script>') %>
 <%- layout('layouts/boilerplate') %>
 <div class="py-4 container">
-    <form action="/campgrounds" method="post" novalidate class="needs-validation">
+    <form action="/campgrounds" method="post" novalidate class="needs-validation" enctype="multipart/form-data">
         <legend>Create a New Campground!</legend>
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
@@ -25,8 +25,8 @@
             <input type="text" class="form-control" id="location" name="location" required>
         </div>
         <div class="mb-3">
-            <label for="image" class="form-label">Image URL</label>
-            <input type="text" class="form-control" id="image" name="image" required>
+            <label for="images" class="form-label">Upload image(s)...</label>
+            <input class="form-control" type="file" id="images" name="images" multiple>
         </div>
         <div class="mb-3 d-flex justify-content-center">
             <button type="submit" class="btn btn-primary mx-3">Create Campground</button>

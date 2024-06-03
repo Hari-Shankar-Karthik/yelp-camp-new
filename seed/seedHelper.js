@@ -1,5 +1,6 @@
-const cities = require("./cities");
 const axios = require('axios');
+const cities = require('./cities');
+const images = require('./images');
 
 const getData = async (url, params = {}, headers = {}) => {
     try {
@@ -42,14 +43,6 @@ module.exports.getLocation = () => {
     return `${city.city}, ${city.state}`;
 };
 
-module.exports.getImage = async () => {
-    const params = {
-        collections: '483251',
-        orientation: 'landscape',
-    };
-    const headers = {
-        Authorization: 'Client-ID KqZWKoh6OBwzaW-5xsdpAbO8Z8c1zXrtIZ2UNLtqtbc',
-    };
-    const data = await getData('https://api.unsplash.com/photos/random', params, headers);
-    return data.urls.regular;
+module.exports.getImages = async imageCount => {
+    return images.sort(() => Math.random() - Math.random()).slice(0, imageCount);
 };
